@@ -57,21 +57,11 @@ public class UserService {
         if (userId.equals(actor.getId())) {
             throw new IllegalArgumentException("You cannot deactivate your own account");
         }
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        if (user.hasRole(ERole.ROLE_ADMIN.name())) {
-            throw new IllegalArgumentException("Admin account cannot be modified");
-        }
-        user.setActive(false);
-        User savedUser = userRepository.save(user);
-        auditLogRepository.save(AuditLog.builder()
-                .action("DEACTIVATE_USER")
-                .performedBy(actor.getUsername())
-                .targetType("USER")
-                .targetId(String.valueOf(savedUser.getId()))
-                .details("Deactivated user " + savedUser.getUsername())
-                .build());
-        return toResponse(savedUser);
+        return updateActiveStatus(userId, actor, false, "DEACTIVATE_USER", "Deactivated user ");
+    }
+
+    public UserResponse activateUser(Long userId, User actor) {
+        return updateActiveStatus(userId, actor, true, "ACTIVATE_USER", "Activated user ");
     }
 
     @Transactional(readOnly = true)
@@ -85,6 +75,28 @@ public class UserService {
         }
         if (request.role() == ERole.ROLE_ADMIN) {
             throw new IllegalArgumentException("Admin role cannot be assigned");
+        }
+    }
+
+    private UserResponse updateActiveStatus(Long userId, User actor, boolean active, String auditAction, String auditMessagePrefix) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        ensureUserCanBeModified(user);
+        user.setActive(active);
+        User savedUser = userRepository.save(user);
+        auditLogRepository.save(AuditLog.builder()
+                .action(auditAction)
+                .performedBy(actor.getUsername())
+                .targetType("USER")
+                .targetId(String.valueOf(savedUser.getId()))
+                .details(auditMessagePrefix + savedUser.getUsername())
+                .build());
+        return toResponse(savedUser);
+    }
+
+    private void ensureUserCanBeModified(User user) {
+        if (user.hasRole(ERole.ROLE_ADMIN.name())) {
+            throw new IllegalArgumentException("Admin account cannot be modified");
         }
     }
 

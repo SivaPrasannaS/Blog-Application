@@ -41,6 +41,11 @@ public class UserController {
         return userService.deactivateUser(id, securityUtils.getCurrentUserOrThrow());
     }
 
+    @PutMapping("/users/{id}/activate")
+    public UserResponse activateUser(@PathVariable Long id) {
+        return userService.activateUser(id, securityUtils.getCurrentUserOrThrow());
+    }
+
     @GetMapping("/audit-logs")
     public List<AuditLog> getAuditLogs() {
         return userService.getAuditLogs();

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { deactivateUserAsync, fetchUsersAsync, updateUserRoleAsync } from './usersSlice';
+import { activateUserAsync, clearUsersError, deactivateUserAsync, fetchUsersAsync, updateUserRoleAsync } from './usersSlice';
 
 const ALLOWED_ROLE_OPTIONS = ['ROLE_USER', 'ROLE_MANAGER'];
 
@@ -17,15 +17,16 @@ function UserManagementPage() {
   useEffect(() => {
     if (error) {
       toast.error(error);
+      dispatch(clearUsersError());
     }
-  }, [error]);
+  }, [dispatch, error]);
 
   const handleRoleChange = async (id, role) => {
     try {
       await dispatch(updateUserRoleAsync({ id, role })).unwrap();
       toast.success('Role updated');
-    } catch (updateError) {
-      toast.error(updateError);
+    } catch {
+      // Errors are surfaced once through the slice error effect.
     }
   };
 
@@ -33,8 +34,17 @@ function UserManagementPage() {
     try {
       await dispatch(deactivateUserAsync(id)).unwrap();
       toast.success('User deactivated');
-    } catch (deactivateError) {
-      toast.error(deactivateError);
+    } catch {
+      // Errors are surfaced once through the slice error effect.
+    }
+  };
+
+  const handleActivate = async (id) => {
+    try {
+      await dispatch(activateUserAsync(id)).unwrap();
+      toast.success('User activated');
+    } catch {
+      // Errors are surfaced once through the slice error effect.
     }
   };
 
@@ -78,9 +88,15 @@ function UserManagementPage() {
                       </span>
                     </td>
                     <td className="text-end">
-                      <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleDeactivate(user.id)}>
-                        Deactivate
-                      </button>
+                      {user.active ? (
+                        <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleDeactivate(user.id)}>
+                          Deactivate
+                        </button>
+                      ) : (
+                        <button type="button" className="btn btn-outline-success btn-sm" onClick={() => handleActivate(user.id)}>
+                          Activate
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

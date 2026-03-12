@@ -21,7 +21,7 @@ public class SecurityUtils {
             return Optional.empty();
         }
         String username = authentication.getName();
-        return userRepository.findByUsernameAndActiveTrue(username);
+        return userRepository.findByUsernameIgnoreCaseAndActiveTrue(username);
     }
 
     public User getCurrentUserOrThrow() {
