@@ -1,0 +1,206 @@
+:root {
+  --app-bg: linear-gradient(135deg, rgba(14, 116, 144, 0.12), rgba(248, 250, 252, 1) 35%, rgba(251, 191, 36, 0.18));
+  --app-nav-bg: rgba(255, 255, 255, 0.8);
+  --app-panel-bg: rgba(255, 255, 255, 0.62);
+  --app-panel-border: rgba(148, 163, 184, 0.24);
+  --app-card-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+[data-bs-theme='dark'] {
+  color-scheme: dark;
+  --bs-body-bg: #08111f;
+  --bs-body-bg-rgb: 8, 17, 31;
+  --bs-body-color: #e7eef8;
+  --bs-body-color-rgb: 231, 238, 248;
+  --bs-emphasis-color: #f8fbff;
+  --bs-emphasis-color-rgb: 248, 251, 255;
+  --bs-secondary-color: rgba(203, 214, 228, 0.78);
+  --bs-secondary-color-rgb: 203, 214, 228;
+  --bs-tertiary-bg: #0f1a2d;
+  --bs-tertiary-bg-rgb: 15, 26, 45;
+  --bs-secondary-bg: #111d31;
+  --bs-secondary-bg-rgb: 17, 29, 49;
+  --bs-border-color: rgba(111, 138, 177, 0.22);
+  --bs-border-color-translucent: rgba(111, 138, 177, 0.18);
+  --bs-card-bg: #0f192b;
+  --bs-card-cap-bg: #13213a;
+  --bs-light-rgb: 20, 31, 51;
+  --bs-primary: #6db4ff;
+  --bs-primary-rgb: 109, 180, 255;
+  --bs-primary-text-emphasis: #d8ecff;
+  --bs-primary-bg-subtle: rgba(31, 76, 129, 0.34);
+  --bs-success: #4fd1a1;
+  --bs-success-rgb: 79, 209, 161;
+  --bs-success-bg-subtle: rgba(10, 78, 61, 0.42);
+  --bs-warning: #f1c96b;
+  --bs-warning-rgb: 241, 201, 107;
+  --bs-warning-text-emphasis: #fff0c2;
+  --bs-warning-bg-subtle: rgba(101, 77, 18, 0.4);
+  --bs-danger: #ff8a8a;
+  --bs-danger-rgb: 255, 138, 138;
+  --bs-danger-bg-subtle: rgba(112, 34, 34, 0.4);
+  --bs-info: #7ad4ff;
+  --bs-info-rgb: 122, 212, 255;
+  --bs-info-bg-subtle: rgba(18, 76, 102, 0.35);
+  --bs-link-color: #9ccfff;
+  --bs-link-hover-color: #d1e7ff;
+  --app-bg: radial-gradient(circle at top left, rgba(49, 94, 173, 0.28), transparent 28%), radial-gradient(circle at top right, rgba(20, 184, 166, 0.16), transparent 24%), linear-gradient(145deg, #08111f 0%, #0c1728 38%, #132038 100%);
+  --app-nav-bg: rgba(11, 18, 33, 0.82);
+  --app-panel-bg: rgba(15, 25, 43, 0.78);
+  --app-panel-border: rgba(109, 180, 255, 0.12);
+  --app-card-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+body {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--bs-body-color);
+  transition: background 220ms ease, color 220ms ease;
+}
+
+.app-shell .navbar {
+  background: var(--app-nav-bg) !important;
+  backdrop-filter: blur(14px);
+  border-color: var(--app-panel-border) !important;
+}
+
+.app-shell .navbar-brand,
+.app-shell h1,
+.app-shell h2,
+.app-shell h3,
+.app-shell h4,
+.app-shell h5,
+.app-shell h6,
+.app-shell .form-label,
+.app-shell .table,
+.app-shell .btn {
+  color: inherit;
+}
+
+.app-shell .card,
+.app-shell .modal-content,
+.app-shell .dropdown-menu {
+  border: 1px solid var(--app-panel-border);
+  box-shadow: var(--app-card-shadow);
+}
+
+[data-bs-theme='dark'] .card,
+[data-bs-theme='dark'] .modal-content,
+[data-bs-theme='dark'] .dropdown-menu {
+  background: linear-gradient(180deg, rgba(18, 29, 48, 0.96), rgba(12, 20, 35, 0.96));
+}
+
+[data-bs-theme='dark'] .bg-body-tertiary,
+[data-bs-theme='dark'] .bg-white,
+[data-bs-theme='dark'] .table-light,
+[data-bs-theme='dark'] .offcanvas,
+[data-bs-theme='dark'] .list-group-item {
+  background-color: var(--bs-tertiary-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme='dark'] .border,
+[data-bs-theme='dark'] .border-top,
+[data-bs-theme='dark'] .border-bottom,
+[data-bs-theme='dark'] .border-start,
+[data-bs-theme='dark'] .border-end {
+  border-color: var(--bs-border-color) !important;
+}
+
+[data-bs-theme='dark'] .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--bs-body-color);
+  --bs-table-border-color: rgba(111, 138, 177, 0.18);
+  --bs-table-hover-bg: rgba(109, 180, 255, 0.08);
+  --bs-table-hover-color: var(--bs-emphasis-color);
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+}
+
+[data-bs-theme='dark'] .form-control,
+[data-bs-theme='dark'] .form-select {
+  background-color: rgba(8, 17, 31, 0.82);
+  border-color: rgba(111, 138, 177, 0.24);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme='dark'] .form-control::placeholder {
+  color: rgba(203, 214, 228, 0.46);
+}
+
+[data-bs-theme='dark'] .form-control:focus,
+[data-bs-theme='dark'] .form-select:focus {
+  border-color: rgba(109, 180, 255, 0.58);
+  box-shadow: 0 0 0 0.25rem rgba(109, 180, 255, 0.18);
+}
+
+[data-bs-theme='dark'] .btn-outline-primary {
+  --bs-btn-color: #9ccfff;
+  --bs-btn-border-color: rgba(109, 180, 255, 0.44);
+  --bs-btn-hover-bg: rgba(109, 180, 255, 0.16);
+  --bs-btn-hover-border-color: rgba(109, 180, 255, 0.7);
+  --bs-btn-hover-color: #f8fbff;
+}
+
+[data-bs-theme='dark'] .btn-outline-secondary {
+  --bs-btn-color: #d2dceb;
+  --bs-btn-border-color: rgba(148, 163, 184, 0.32);
+  --bs-btn-hover-bg: rgba(148, 163, 184, 0.12);
+  --bs-btn-hover-border-color: rgba(148, 163, 184, 0.52);
+  --bs-btn-hover-color: #f8fbff;
+}
+
+[data-bs-theme='dark'] .btn-outline-danger {
+  --bs-btn-color: #ffb0b0;
+  --bs-btn-border-color: rgba(255, 138, 138, 0.42);
+  --bs-btn-hover-bg: rgba(255, 138, 138, 0.16);
+  --bs-btn-hover-border-color: rgba(255, 138, 138, 0.6);
+  --bs-btn-hover-color: #fff4f4;
+}
+
+[data-bs-theme='dark'] .alert {
+  border-color: transparent;
+}
+
+[data-bs-theme='dark'] .alert-info {
+  background: rgba(24, 92, 122, 0.28);
+  color: #c8efff;
+}
+
+[data-bs-theme='dark'] .alert-warning {
+  background: rgba(117, 92, 29, 0.28);
+  color: #ffe9a8;
+}
+
+[data-bs-theme='dark'] .alert-danger {
+  background: rgba(119, 43, 43, 0.26);
+  color: #ffd0d0;
+}
+
+[data-bs-theme='dark'] .badge.text-bg-light {
+  background: rgba(109, 180, 255, 0.14) !important;
+  color: #d9ecff !important;
+}
+
+[data-bs-theme='dark'] .nav-link.text-body {
+  color: rgba(220, 228, 238, 0.84) !important;
+}
+
+[data-bs-theme='dark'] .text-secondary,
+[data-bs-theme='dark'] .small.text-secondary {
+  color: rgba(203, 214, 228, 0.74) !important;
+}
+
+[data-bs-theme='dark'] .shadow-sm,
+[data-bs-theme='dark'] .shadow-lg {
+  box-shadow: var(--app-card-shadow) !important;
+}
+
+[data-bs-theme='dark'] .Toastify__toast-theme--dark {
+  background: #101a2d;
+  color: #edf4ff;
+}
