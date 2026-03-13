@@ -28,6 +28,10 @@ const postsAPI = {
   publishPost: async ({ id, published }) => {
     const response = await axiosInstance.patch(`/api/posts/${id}/publish`, null, { params: { published } });
     return response.data;
+  },
+  archivePost: async (id) => {
+    const response = await axiosInstance.patch(`/api/posts/${id}/archive`);
+    return response.data;
   }
 };
 

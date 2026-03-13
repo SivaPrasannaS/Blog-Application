@@ -104,6 +104,18 @@ public class PostService {
         return toResponse(postRepository.save(post));
     }
 
+    public PostResponse archivePost(Long id, User currentUser) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
+
+        if (!currentUser.hasRole("ROLE_MANAGER") && !currentUser.hasRole("ROLE_ADMIN")) {
+            throw new AccessDeniedException("You do not have permission to archive posts");
+        }
+
+        post.setStatus(PostStatus.ARCHIVED);
+        return toResponse(postRepository.save(post));
+    }
+
     public void deletePost(Long id, User currentUser) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));

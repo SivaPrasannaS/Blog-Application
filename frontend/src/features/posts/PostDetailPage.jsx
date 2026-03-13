@@ -6,7 +6,7 @@ import ConfirmModal from '../../components/common/ConfirmModal';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import RoleGuard from '../../components/rbac/RoleGuard';
 import { useRBAC } from '../../hooks/useRBAC';
-import { deletePostAsync, fetchPostByIdAsync, publishPostAsync } from './postsSlice';
+import { archivePostAsync, deletePostAsync, fetchPostByIdAsync, publishPostAsync } from './postsSlice';
 import { formatDate } from '../../utils/dateUtils';
 
 function PostDetailPage() {
@@ -46,6 +46,15 @@ function PostDetailPage() {
     }
   };
 
+  const handleArchive = async () => {
+    try {
+      await dispatch(archivePostAsync(postId)).unwrap();
+      toast.success('Post archived');
+    } catch (archiveError) {
+      toast.error(archiveError);
+    }
+  };
+
   if (!selected || selected.id !== postId) {
     return <LoadingSkeleton lines={8} />;
   }
@@ -56,7 +65,7 @@ function PostDetailPage() {
         <div className="card-body p-4 p-lg-5">
           <div className="d-flex flex-wrap gap-2 mb-3">
             <span className="badge text-bg-light">{selected.categoryName}</span>
-            <span className={`badge ${selected.status === 'PUBLISHED' ? 'text-bg-success' : 'text-bg-secondary'}`}>{selected.status}</span>
+            <span className={`badge ${selected.status === 'PUBLISHED' ? 'text-bg-success' : selected.status === 'ARCHIVED' ? 'text-bg-dark' : 'text-bg-secondary'}`}>{selected.status}</span>
           </div>
           <h1 className="display-6 mb-3">{selected.title}</h1>
           <p className="text-secondary">By {selected.authorUsername} on {formatDate(selected.createdAt)}</p>
@@ -67,6 +76,11 @@ function PostDetailPage() {
             {can('post:publish') && selected.status === 'DRAFT' ? (
               <button type="button" className="btn btn-success" onClick={handlePublish} disabled={loading}>
                 {loading ? 'Publishing...' : 'Publish draft'}
+              </button>
+            ) : null}
+            {can('post:archive') && selected.status === 'PUBLISHED' ? (
+              <button type="button" className="btn btn-outline-secondary" onClick={handleArchive} disabled={loading}>
+                {loading ? 'Archiving...' : 'Archive post'}
               </button>
             ) : null}
             <RoleGuard action="edit" post={selected}>

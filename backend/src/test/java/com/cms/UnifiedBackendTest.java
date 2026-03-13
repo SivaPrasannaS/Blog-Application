@@ -566,6 +566,30 @@ class UnifiedBackendTest {
         }
 
         @Test
+        void day_9_archive_post_manager_returns_archived() throws Exception {
+            TestUser manager = createManager();
+            CategoryInfo category = createCategory(manager.token(), uniqueValue("archive-manager-category"));
+            PostInfo post = createPost(manager.token(), uniqueValue("archive-manager-post"), VALID_POST_BODY, category.id(), "PUBLISHED");
+
+            MvcResult result = patchJson("/api/posts/" + post.id() + "/archive", manager.token())
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            assertEquals("ARCHIVED", readJson(result).path("status").asText());
+        }
+
+        @Test
+        void day_9_archive_post_user_returns_forbidden() throws Exception {
+            TestUser user = registerUser();
+            TestUser manager = createManager();
+            CategoryInfo category = createCategory(manager.token(), uniqueValue("archive-forbidden-category"));
+            PostInfo post = createPost(manager.token(), uniqueValue("archive-forbidden-post"), VALID_POST_BODY, category.id(), "PUBLISHED");
+
+            patchJson("/api/posts/" + post.id() + "/archive", user.token())
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
         void day_4_delete_post_owner_returns_ok() throws Exception {
             TestUser owner = registerUser();
             TestUser manager = createManager();

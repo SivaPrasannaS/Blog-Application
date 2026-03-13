@@ -12,7 +12,7 @@ import authReducer, { loginAsync, logout, refreshTokenAsync, selectCurrentUser, 
 import LoginPage from '../features/auth/LoginPage';
 import RegisterPage from '../features/auth/RegisterPage';
 import categoriesReducer from '../features/categories/categoriesSlice';
-import postsReducer, { createPostAsync, deletePostAsync, fetchDraftPostsAsync, fetchPostByIdAsync, fetchPostsAsync, publishPostAsync, updatePostAsync } from '../features/posts/postsSlice';
+import postsReducer, { archivePostAsync, createPostAsync, deletePostAsync, fetchDraftPostsAsync, fetchPostByIdAsync, fetchPostsAsync, publishPostAsync, updatePostAsync } from '../features/posts/postsSlice';
 import PostDetailPage from '../features/posts/PostDetailPage';
 import PostFormPage from '../features/posts/PostFormPage';
 import PostListPage from '../features/posts/PostListPage';
@@ -46,7 +46,8 @@ jest.mock('../features/posts/postsSlice', () => {
     createPostAsync: jest.fn((payload) => ({ type: 'posts/create', payload })),
     updatePostAsync: jest.fn((payload) => ({ type: 'posts/update', payload })),
     deletePostAsync: jest.fn((payload) => ({ type: 'posts/delete', payload })),
-    publishPostAsync: jest.fn((payload) => ({ type: 'posts/publish', payload }))
+    publishPostAsync: jest.fn((payload) => ({ type: 'posts/publish', payload })),
+    archivePostAsync: jest.fn((payload) => ({ type: 'posts/archive', payload }))
   };
 });
 
@@ -147,6 +148,20 @@ describe('unified frontend tests', () => {
       expect(nextState.items).toEqual([promotedDraft, publishedPost]);
       expect(nextState.draftItems).toEqual([]);
       expect(nextState.total).toBe(2);
+    });
+
+    it('day_9_archive_post_fulfilled_removes_from_published_list', () => {
+      const publishedPost = { id: 3, title: 'Live story', status: 'PUBLISHED' };
+      const archivedPost = { id: 3, title: 'Live story', status: 'ARCHIVED' };
+
+      const nextState = postsReducer(
+        { ...emptyPostsState, items: [publishedPost], selected: publishedPost, total: 1 },
+        { type: 'posts/archivePost/fulfilled', payload: archivedPost }
+      );
+
+      expect(nextState.selected).toEqual(archivedPost);
+      expect(nextState.items).toEqual([]);
+      expect(nextState.total).toBe(0);
     });
   });
 
@@ -359,6 +374,56 @@ describe('unified frontend tests', () => {
 
       await waitFor(() => expect(publishPostAsync).toHaveBeenCalledWith({ id: 9, published: true }));
     });
+
+    it('day_9_manager_published_shows_archive_button', () => {
+      const store = createPostDetailStore(
+        { user: { id: 2, roles: ['ROLE_MANAGER'] }, token: 't', refreshToken: 'r', loading: false, error: null },
+        {
+          ...emptyPostsState,
+          selected: {
+            id: 9,
+            title: 'Published title',
+            body: 'This published body is long enough for rendering in the detail page.',
+            categoryName: 'Tech',
+            authorUsername: 'manager',
+            authorId: 2,
+            createdAt: '2026-03-11T10:00:00',
+            status: 'PUBLISHED'
+          }
+        }
+      );
+
+      renderPostDetailPage(store);
+
+      expect(screen.getByRole('button', { name: /archive post/i })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /publish draft/i })).not.toBeInTheDocument();
+    });
+
+    it('day_9_archive_post_dispatches_archive_async', async () => {
+      const user = userEvent.setup();
+      const store = createPostDetailStore(
+        { user: { id: 2, roles: ['ROLE_MANAGER'] }, token: 't', refreshToken: 'r', loading: false, error: null },
+        {
+          ...emptyPostsState,
+          selected: {
+            id: 9,
+            title: 'Published title',
+            body: 'This published body is long enough for rendering in the detail page.',
+            categoryName: 'Tech',
+            authorUsername: 'manager',
+            authorId: 2,
+            createdAt: '2026-03-11T10:00:00',
+            status: 'PUBLISHED'
+          }
+        }
+      );
+      store.dispatch = jest.fn(() => ({ unwrap: () => Promise.resolve() }));
+
+      renderPostDetailPage(store);
+      await user.click(screen.getByRole('button', { name: /archive post/i }));
+
+      await waitFor(() => expect(archivePostAsync).toHaveBeenCalledWith(9));
+    });
   });
 
   describe('PostListPage', () => {
@@ -515,6 +580,14 @@ describe('unified frontend tests', () => {
 
     it('day_8_can_delete_post_is_true_for_admin', () => {
       expect(createRBACHelpers({ id: 3, roles: ['ROLE_ADMIN'] }).canDeletePost({ authorId: 1 })).toBe(true);
+    });
+
+    it('day_9_post_archive_is_false_for_user', () => {
+      expect(createRBACHelpers({ id: 1, roles: ['ROLE_USER'] }).can('post:archive')).toBe(false);
+    });
+
+    it('day_9_post_archive_is_true_for_manager', () => {
+      expect(createRBACHelpers({ id: 2, roles: ['ROLE_MANAGER'] }).can('post:archive')).toBe(true);
     });
   });
 
