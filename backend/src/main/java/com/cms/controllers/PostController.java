@@ -70,6 +70,12 @@ public class PostController {
         return postService.publishPost(id, published, securityUtils.getCurrentUserOrThrow());
     }
 
+    @PatchMapping("/{id:\\d+}/archive")
+    @PreAuthorize("hasAnyAuthority('ROLE_MANAGER','ROLE_ADMIN')")
+    public PostResponse archivePost(@PathVariable Long id) {
+        return postService.archivePost(id, securityUtils.getCurrentUserOrThrow());
+    }
+
     @DeleteMapping("/{id:\\d+}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated()")

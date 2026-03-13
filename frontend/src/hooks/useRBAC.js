@@ -10,6 +10,7 @@ export const ROLES = {
 export const PERMISSIONS = {
   'post:create': [ROLES.USER, ROLES.MANAGER, ROLES.ADMIN],
   'post:publish': [ROLES.MANAGER, ROLES.ADMIN],
+  'post:archive': [ROLES.MANAGER, ROLES.ADMIN],
   'post:delete_any': [ROLES.ADMIN],
   'category:manage': [ROLES.MANAGER, ROLES.ADMIN],
   'user:manage': [ROLES.ADMIN],

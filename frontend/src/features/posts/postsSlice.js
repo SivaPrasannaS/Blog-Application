@@ -59,6 +59,14 @@ export const publishPostAsync = createAsyncThunk('posts/publishPost', async (pay
   }
 });
 
+export const archivePostAsync = createAsyncThunk('posts/archivePost', async (id, { rejectWithValue }) => {
+  try {
+    return await postsAPI.archivePost(id);
+  } catch (error) {
+    return rejectWithValue(toErrorMessage(error));
+  }
+});
+
 const initialState = {
   items: [],
   draftItems: [],
@@ -162,7 +170,16 @@ const postsSlice = createSlice({
           state.total = Math.max(0, state.total - 1);
         }
       })
-      .addCase(publishPostAsync.rejected, rejected);
+      .addCase(publishPostAsync.rejected, rejected)
+      .addCase(archivePostAsync.pending, pending)
+      .addCase(archivePostAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selected = action.payload;
+        state.items = state.items.filter((item) => item.id !== action.payload.id);
+        state.draftItems = state.draftItems.filter((item) => item.id !== action.payload.id);
+        state.total = Math.max(0, state.total - 1);
+      })
+      .addCase(archivePostAsync.rejected, rejected);
   }
 });
 
